@@ -235,6 +235,7 @@ for(selector.name in names(chip.seq$samples)){
                          clickSelects=selector.name),
               data=sample.df, alpha=1/2)+
     geom_point(aes_string(clickSelects=other.name, x="percent", y="y",
+                          key=other.name,
                           showSelected="set.name", showSelected2="complexity.i",
                           fill="error.type"),
                data=nonzero.pairs, color="black", size=3, alpha=0.55)
