@@ -1,6 +1,6 @@
 requireGitHub::requireGitHub(
              "tdhock/ggplot2@98cefe4d653ce8f214177b66dc030c2f3c725ffb",
-             "tdhock/animint@c4ff92d8c4edf523d20c6022fb3b515b19974b8b")
+             "tdhock/animint@5ec9cf3f0f2be297a534b176df6f4beddf679721")
 
 load("../data/chip.seq.RData")
 
@@ -47,12 +47,12 @@ viz <-
                   data=chip.seq$set.info, size=5),
        
        samples=ggplot()+
+       scale_x_continuous("false positive/negative rate (percent)",
+                          breaks=c(0, 50, 100), limits=c(-250, 100))+
        theme_animint(width=300, height=220)+
        scale_fill_manual(values=fp.fn.colors)+
        ggtitle("select samples")+
-       xlim(-250, 100)+
        ylab("sample")+
-       xlab("false positive/negative rate (percent)")+
        theme(axis.line.y=element_blank(),
              axis.text.y=element_blank(),
              axis.ticks.y=element_blank()),
@@ -209,6 +209,9 @@ viz <-
 ## duration, because the functions/data in different pairs of profiles
 ## are not related. It should cut from the first data to the next, as
 ## the signal pairs do.
+
+## TODO: combine the probability plot and the signal pair plot into a
+## single facetted plot.
 for(selector.name in names(chip.seq$samples)){
   sample.df <- chip.seq$samples[[selector.name]]
   sample.df$x <- -5
@@ -226,6 +229,9 @@ for(selector.name in names(chip.seq$samples)){
   sample.df$ymax <- sample.df$y+1/2
   text.df <- sample.df
   text.df$y <- text.df$y-1/2
+  nonzero.pairs$key <- with(nonzero.pairs, {
+    paste(sample1, sample2, error.type)
+  })
   viz$samples <- viz$samples+
     geom_text(aes_string(clickSelects=selector.name, x="x", y="y",
                          showSelected="set.name", label="label"),
@@ -235,7 +241,7 @@ for(selector.name in names(chip.seq$samples)){
                          clickSelects=selector.name),
               data=sample.df, alpha=1/2)+
     geom_point(aes_string(clickSelects=other.name, x="percent", y="y",
-                          key=other.name,
+                          key="key",
                           showSelected="set.name", showSelected2="complexity.i",
                           fill="error.type"),
                data=nonzero.pairs, color="black", size=3, alpha=0.55)
