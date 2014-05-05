@@ -200,7 +200,7 @@ unaligned <-
 ## WORKS: key aesthetic in ggplot2 and key function in D3 ensures
 ## constancy in the select samples geom_points.
 
-## TODO: when I click to change the model complexity.i selection, I
+## WORKS: when I click to change the model complexity.i selection, I
 ## expect the select samples geom_points, ROC curves, and learned
 ## difference function blue geom_ribbon to have a smooth transition
 ## duration over 2 seconds. Smooth transitions make sense here because
