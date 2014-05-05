@@ -1,6 +1,5 @@
 requireGitHub::requireGitHub(
-  "tdhock/animint@11e6733f07bdf6c0c79ecc4f58f1d80413f0575f",
-  ##           "tdhock/animint@5ec9cf3f0f2be297a534b176df6f4beddf679721",
+  "tdhock/animint@9151224296018fc0876a57acce05cf59d02e7b9e",
   "tdhock/ggplot2@98cefe4d653ce8f214177b66dc030c2f3c725ffb")
 
 load("../data/chip.seq.RData")
@@ -198,7 +197,7 @@ unaligned <-
        geom_hline(yintercept=0, color="white"),
        
        duration=list(complexity.i=2000))
-## TODO: key aesthetic in ggplot2 and key function in D3 to ensure
+## WORKS: key aesthetic in ggplot2 and key function in D3 ensures
 ## constancy in the select samples geom_points.
 
 ## TODO: when I click to change the model complexity.i selection, I
@@ -460,10 +459,10 @@ gg2animint(aligned, "chip-seq-aligned")
 ## TODO: theme_animint(updateAxes=c("x", "y")) Update the x and y axes
 ## after the selection changes, instead of drawing geom_text labels
 ## for the min/max values.
-prob.df <- chip.seq$probability
 prob.df <-
   rbind(head(chip.seq$probability, 2000),
         tail(chip.seq$probability, 2000))
+prob.df <- chip.seq$probability
 fac <- function(x)factor(x, c("sample1", "probability", "sample2"))
 prob.df$facet <- fac("probability")
 updateAxes <-
@@ -632,9 +631,9 @@ for(selector.name in names(chip.seq$samples)){
 print(updateAxes)
 gg2animint(updateAxes, "chip-seq-updateAxes")
 
-## The probability plot and the signal pair plot are combined into a
-## single non-facetted plot below, with the probability function drawn
-## on top of the signals.
+## WORKS: The probability plot and the signal pair plot are combined
+## into a single non-facetted plot below, with the probability
+## function drawn on top of the signals.
 combined <-
   list(chroms=ggplot()+
        theme_animint(width=250, height=220)+
