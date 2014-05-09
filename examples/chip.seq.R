@@ -1,5 +1,5 @@
 requireGitHub::requireGitHub(
-  "tdhock/animint@9151224296018fc0876a57acce05cf59d02e7b9e",
+  "tdhock/animint@ae6ee1190a890230cc6b503ccee7e9e40aff96fe",
   "tdhock/ggplot2@98cefe4d653ce8f214177b66dc030c2f3c725ffb")
 
 load("../data/chip.seq.RData")
@@ -158,9 +158,13 @@ unaligned <-
                        showSelected4=set.name),
                    chunk_vars=c("sample1","sample2","complexity.i","set.name"),
                    data=chip.seq$probability, color="blue")+
-       ylab("probability of difference"),
+       scale_y_continuous("probability of difference",
+                          breaks=c(0, 1/2, 1)),
        
        signal=ggplot()+
+       scale_y_continuous("<---- one signal ----- another signal ->",
+                          breaks=c(-1, 0, 1),
+                          labels=c("max", "min", "max"))+
        theme_animint(width=1300, height=300)+
        ggtitle("ChIP-seq signal pair")+
        theme(axis.line.x=element_blank(),
@@ -183,7 +187,7 @@ unaligned <-
                      ymin=0, ymax=signal.norm,
                      showSelected=set.name,
                      showSelected2=sample1),
-                 data=chip.seq$signal.segments$sample1)+
+                 data=chip.seq$signal.segments$sample1, size=0)+
        geom_text(aes(0, -1, label=sprintf("%s %s max=%.1f",
                              cell.type, sample2, max),
                      showSelected=set.name,
@@ -193,7 +197,7 @@ unaligned <-
                      ymin=-signal.norm, ymax=0,
                      showSelected=set.name,
                      showSelected2=sample2),
-                 data=chip.seq$signal.segments$sample2)+
+                 data=chip.seq$signal.segments$sample2, size=0)+
        geom_hline(yintercept=0, color="white"),
        
        duration=list(complexity.i=2000))
@@ -392,7 +396,7 @@ aligned <-
                      ymin=0, ymax=signal.norm,
                      showSelected=set.name,
                      showSelected2=sample1),
-                 data=chip.seq$signal.segments$sample1)+
+                 data=chip.seq$signal.segments$sample1, size=0)+
        geom_text(aes(0, -1, label=sprintf("%s %s max=%.1f",
                              cell.type, sample2, max),
                      showSelected=set.name,
@@ -402,7 +406,7 @@ aligned <-
                      ymin=-signal.norm, ymax=0,
                      showSelected=set.name,
                      showSelected2=sample2),
-                 data=chip.seq$signal.segments$sample2)+
+                 data=chip.seq$signal.segments$sample2, size=0)+
        geom_hline(aes(yintercept=y),
                   data=data.frame(y=0, facet="signal"),
                   color="white")+
@@ -462,7 +466,7 @@ gg2animint(aligned, "chip-seq-aligned")
 prob.df <-
   rbind(head(chip.seq$probability, 2000),
         tail(chip.seq$probability, 2000))
-prob.df <- chip.seq$probability
+prob.df <- chip.seq$probability # comment to print ggplot faster.
 fac <- function(x)factor(x, c("sample1", "probability", "sample2"))
 prob.df$facet <- fac("probability")
 updateAxes <-
@@ -593,7 +597,7 @@ for(selector.name in names(chip.seq$samples)){
                          ymin=0, ymax="signal",
                          showSelected="set.name",
                          showSelected2=selector.name),
-              data=seg.df)
+              data=seg.df, size=0)
   ## Select samples plot.
   sample.df <- chip.seq$samples[[selector.name]]
   sample.df$x <- -5
@@ -628,7 +632,7 @@ for(selector.name in names(chip.seq$samples)){
                           fill="error.type"),
                data=nonzero.pairs, color="black", size=3, alpha=0.55)
 }
-print(updateAxes)
+##print(updateAxes$probSignal) #uncomment to plot facets
 gg2animint(updateAxes, "chip-seq-updateAxes")
 
 ## WORKS: The probability plot and the signal pair plot are combined
@@ -753,7 +757,7 @@ combined <-
                      ymin=1/2, ymax=(1+signal.norm)/2,
                      showSelected=set.name,
                      showSelected2=sample1),
-                 data=chip.seq$signal.segments$sample1)+
+                 data=chip.seq$signal.segments$sample1, size=0)+
        geom_text(aes(0, -0.06, label=sprintf("%s %s max=%.1f",
                              cell.type, sample2, max),
                      showSelected=set.name,
@@ -763,7 +767,7 @@ combined <-
                      ymin=(1-signal.norm)/2, ymax=1/2,
                      showSelected=set.name,
                      showSelected2=sample2),
-                 data=chip.seq$signal.segments$sample2)+
+                 data=chip.seq$signal.segments$sample2, size=0)+
        geom_hline(yintercept=1/2, color="white")+
        geom_ribbon(aes(mid.norm, ymin=min.prob, ymax=max.prob,
                        showSelected=sample1,
