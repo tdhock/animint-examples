@@ -1,4 +1,4 @@
-TODO
+2014.5.14
 
-example of aes(showSelected=insert.show, clickSelects=insert.click)
-from Eric's scaffold viz.
+aes(showSelected=insert.show, clickSelects=insert.click) in
+examples/scaffolds.R
