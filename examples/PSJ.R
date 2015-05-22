@@ -388,6 +388,38 @@ print(system.time({
 ## apparent size is less. The compiler should not create files less
 ## than 4KB.
 
+## After gzipping these files, most stay at 4096 bytes, but the bigger
+## ones compress:
+
+## thocking@silene:~/R/animint-examples/examples/PSJ-for(master)$ du --block-size=1 -c *.tsv|grep -v 4096
+## 8192	geom3_segment_coverage_chunk1.tsv
+## 20480	geom465_text_modelSelection_chunk1.tsv
+## 245760	geom5_line_coverage_chunk1.tsv
+## 7471104	total
+
+## thocking@silene:~/R/animint-examples/examples/PSJ-for(master)$ gzip *.tsv
+## thocking@silene:~/R/animint-examples/examples/PSJ-for(master)$ du --block-size=1 -c geom3_segment_coverage_chunk1.tsv.gz geom465_text_modelSelection_chunk1.tsv.gz geom5_line_coverage_chunk1.tsv.gz 
+## 4096	geom3_segment_coverage_chunk1.tsv.gz
+## 4096	geom465_text_modelSelection_chunk1.tsv.gz
+## 61440	geom5_line_coverage_chunk1.tsv.gz
+## 69632	total
+
+## thocking@silene:~/R/animint-examples/examples/PSJ-for(master)$ du --block-size=1 -c *.gz|tail
+## 4096	geom98_segment_coverage_chunk1.tsv.gz
+## 4096	geom99_segment_coverage_chunk1.tsv.gz
+## 4096	geom99_segment_coverage_chunk2.tsv.gz
+## 4096	geom99_segment_coverage_chunk3.tsv.gz
+## 4096	geom99_segment_coverage_chunk4.tsv.gz
+## 4096	geom9_segment_coverage_chunk1.tsv.gz
+## 4096	geom9_segment_coverage_chunk2.tsv.gz
+## 4096	geom9_segment_coverage_chunk3.tsv.gz
+## 4096	geom9_segment_coverage_chunk4.tsv.gz
+## 7266304	total
+
+## In this case the savings is only 200KB, but there are likely to be
+## more savings if we switch to making a smaller number of larger
+## files.
+
 cat("compiling data viz\n")
 print(system.time({
   animint2dir(viz, out.dir="PSJ")
