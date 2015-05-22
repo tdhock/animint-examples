@@ -420,6 +420,13 @@ print(system.time({
 ## more savings if we switch to making a smaller number of larger
 ## files.
 
+## However, for serving these files we need to keep them as
+## uncompressed tsv. For file transfer purposes the web server (for
+## example gist.github.com) will automatically compress the file and
+## serve it with headers
+## Content-Encoding: gzip
+## Content-Type: text/tab-separated-values
+
 cat("compiling data viz\n")
 print(system.time({
   animint2dir(viz, out.dir="PSJ")
