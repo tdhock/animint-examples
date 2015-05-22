@@ -339,7 +339,7 @@ print(system.time({
 }))
 
 ## Timings show that plot construction is must faster when not using
-## for loops.
+## a for loop.
 
 ## constructing data viz with for loops
 ##    user  system elapsed 
@@ -348,6 +348,45 @@ print(system.time({
 ## constructing data viz with .variable .value
 ##    user  system elapsed 
 ##   0.104   0.000   0.105
+
+## Constructing the plot using the for loop above makes 1180 geoms
+## which are chunked into many small tsv files, which results in a lot
+## of wasted disk space:
+
+## ~/R/animint-examples/examples $ du -hs PSJ-for/
+## 8.3M	PSJ-for/
+## ~/R/animint-examples/examples $ ls PSJ-for/|wc -l
+## 1767
+## ~/R/animint-examples/examples $ ls PSJ-for/geom*.tsv|wc -l
+## 1760
+
+## ~/R/animint-examples/examples $ du --block-size=1 -cs PSJ-for/*.tsv|tail
+## 4096	PSJ-for/geom98_segment_coverage_chunk1.tsv
+## 4096	PSJ-for/geom99_segment_coverage_chunk1.tsv
+## 4096	PSJ-for/geom99_segment_coverage_chunk2.tsv
+## 4096	PSJ-for/geom99_segment_coverage_chunk3.tsv
+## 4096	PSJ-for/geom99_segment_coverage_chunk4.tsv
+## 4096	PSJ-for/geom9_segment_coverage_chunk1.tsv
+## 4096	PSJ-for/geom9_segment_coverage_chunk2.tsv
+## 4096	PSJ-for/geom9_segment_coverage_chunk3.tsv
+## 4096	PSJ-for/geom9_segment_coverage_chunk4.tsv
+## 7471104	total
+
+## ~/R/animint-examples/examples $ du --block-size=1 -cs --apparent-size PSJ-for/*.tsv|tail
+## 480	PSJ-for/geom98_segment_coverage_chunk1.tsv
+## 154	PSJ-for/geom99_segment_coverage_chunk1.tsv
+## 261	PSJ-for/geom99_segment_coverage_chunk2.tsv
+## 368	PSJ-for/geom99_segment_coverage_chunk3.tsv
+## 475	PSJ-for/geom99_segment_coverage_chunk4.tsv
+## 153	PSJ-for/geom9_segment_coverage_chunk1.tsv
+## 259	PSJ-for/geom9_segment_coverage_chunk2.tsv
+## 365	PSJ-for/geom9_segment_coverage_chunk3.tsv
+## 471	PSJ-for/geom9_segment_coverage_chunk4.tsv
+## 961044	total
+
+## On my filesystem each tsv file takes 4096 bytes even though its
+## apparent size is less. The compiler should not create files less
+## than 4KB.
 
 cat("compiling data viz\n")
 print(system.time({
