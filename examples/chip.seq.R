@@ -248,7 +248,7 @@ for(selector.name in names(chip.seq$samples)){
                           fill="error.type"),
                data=nonzero.pairs, color="black", size=3, alpha=0.55)
 }
-gg2animint(unaligned, "chip-seq-unaligned")
+animint2dir(unaligned, "chip-seq-unaligned")
 
 ## TODO: the probability plot and the signal pair plot are combined
 ## into a single facetted plot below, which enforces that they have
