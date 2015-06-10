@@ -135,7 +135,7 @@ print(system.time({
            ylab("")+
            facet_grid(what ~ ., scales="free"),
          
-         title="PeakSegJoint model of 4 H3K4me3 ChIP-seq samples",
+         title="Animint compiler with for loops",
 
          first=PSJ$first)
 
@@ -194,7 +194,7 @@ print(system.time({
 
 cat("compiling data viz\n")
 print(system.time({
-  animint2dir(viz.for, out.dir="PSJ-for")
+  animint2dir(viz.for, out.dir="PSJ-for-new")
 }))
 
 sample.peaks <- do.call(rbind, PSJ$peaks.by.problem)
@@ -203,6 +203,10 @@ prob.peaks.names <-
     "chromStart", "chromEnd")
 problem.peaks <- unique(data.frame(sample.peaks)[, prob.peaks.names])
 problem.peaks$sample.id <- "problems"
+
+peakvar <- function(position){
+  paste0(gsub("[-:]", ".", position), "peaks")
+}
 
 cat("constructing data viz with .variable .value\n")
 print(system.time({
@@ -260,7 +264,7 @@ print(system.time({
                              xmax=chromEnd/1e3,
                              linetype=status,
                              showSelected.value=peaks,
-                             showSelected.variable=problem.name,
+                             showSelected.variable=peakvar(problem.name),
                              showSelected2=bases.per.problem),
                          data=all.regions,
                          fill=NA,
@@ -268,14 +272,14 @@ print(system.time({
            geom_segment(aes(chromStart/1e3, 0,
                             xend=chromEnd/1e3, yend=0,
                             clickSelects=problem.name,
-                            showSelected.variable=problem.name,
+                            showSelected.variable=peakvar(problem.name),
                             showSelected.value=peaks,
                             showSelected2=bases.per.problem),
                         data=sample.peaks, size=7, color="deepskyblue")+
            geom_segment(aes(chromStart/1e3, problem.i,
                             xend=chromEnd/1e3, yend=problem.i,
                             clickSelects=problem.name,
-                            showSelected.variable=problem.name,
+                            showSelected.variable=peakvar(problem.name),
                             showSelected.value=peaks,
                             showSelected2=bases.per.problem),
                         data=problem.peaks, size=7, color="deepskyblue"),
@@ -319,14 +323,15 @@ print(system.time({
            ylab("")+
            geom_tallrect(aes(xmin=min.log.lambda, 
                              xmax=max.log.lambda, 
-                             clickSelects.variable=problem.name,
+                             clickSelects.variable=
+                               peakvar(problem.name),
                              clickSelects.value=peaks,
                              showSelected=problem.name,
                              showSelected2=bases.per.problem),
                          data=all.modelSelection, alpha=0.5)+
            facet_grid(what ~ ., scales="free"),
          
-         title="PeakSegJoint model of 4 H3K4me3 ChIP-seq samples",
+         title="Animint compiler with .variable .value aesthetics",
 
          first=PSJ$first)
 
