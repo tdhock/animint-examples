@@ -460,22 +460,51 @@ get_tallrect <- function(...){
   error.regions
 }
 
-## For example, the biggest problem.
-problem.name <- "chr11:118194818-118266077"
-bases.per.problem <- "104267"
-
+## For example, the second problem in the selected resolution.
+problem.name <- "chr11:118174946-118177139"
+bases.per.problem <- "6516"
 get_segment <- function(problem.name, bases.per.problem, ...){
+  L <- list(...)
+  res.problems <- problems.by.res[[bases.per.problem]]
+  is.selected <- res.problems$problem.name == problem.name
+  other.problems <- res.problems[!is.selected, ]
+  peaks.by.problem <- list()
+  for(other.name in other.problems$problem.name){
+    selector.name <- peakvar(other.name)
+    prob.peaks <- PSJ$peaks.by.problem[[selector.name]]
+    peaks.by.problem[[other.name]] <-
+      subset(prob.peaks, peaks == L[[selector.name]])
+  }
+  other.peaks <- do.call(rbind, peaks.by.problem)
   
+  selector.name <- peakvar(problem.name)
+  prob.peaks <- PSJ$peaks.by.problem[[selector.name]]
+  modelSelection <- PSJ$modelSelection.by.problem[[selector.name]]
+  modelSelection$errors <- NA
+  for(model.i in 1:nrow(modelSelection)){
+    model.row <- modelSelection[model.i, ]
+    model.peaks <- subset(prob.peaks, peaks == model.row$peaks)
+    all.peaks <- rbind(other.peaks, model.peaks)
+    ## TODO: this is the same computation as in get_tallrect, so why
+    ## don't we just have it used the cached value from get_tallrect?
+    error.regions <- PeakErrorSamples(all.peaks, PSJ$filled.regions)
+    modelSelection$errors[model.i] <- with(error.regions, sum(fp+fn))
+  }
+  modelSelection
 }
 
 ## Cache functions are passed all the current values of the selector
 ## variables, and return a character vector of selector variable names
 ## whose values will be used for saving the computed data.
-cache_tallrect <- function(bases.per.problem, ...){
+cache_tallrect <- function(bases.per.problem){
   res.problems <- problems.by.res[[bases.per.problem]]
   peakvar(res.problems$problem.name)
 }
 cache_segment <- function(bases.per.problem, ...){
+  res.problems <- problems.by.res[[bases.per.problem]]
+  is.selected <- res.problems$problem.name == problem.name
+  other.problems <- res.problems[!is.selected, ]
+  peakvar(other.problems$problem.name)
 }
 
 cat("constructing data viz with lookup function\n")
