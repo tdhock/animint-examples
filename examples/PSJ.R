@@ -1,5 +1,8 @@
-library(animint)
-library(PeakSegJoint)
+works_with_R(
+  "3.2.2",
+  ggplot2="2.1.0",
+  PeakSegJoint="2016.3.2",
+  "tdhock/animint@03735869af84629d269556442345b2ea506ab42a")
 
 load("../data/PSJ.RData")
 
@@ -90,8 +93,9 @@ print(system.time({
            theme_bw()+
            theme_animint(width=1500, height=facet.rows*100)+
            theme(panel.margin=grid::unit(0, "cm"))+
-           facet_grid(sample.id ~ ., labeller=function(var, val){
-             sub("McGill0", "", sub(" ", "\n", val))
+           facet_grid(sample.id ~ ., labeller=function(df){
+             df$sample.id <- sub("McGill0", "", sub(" ", "\n", df$sample.id))
+             df
            }, scales="free")+
            geom_line(aes(base/1e3, count),
                      data=PSJ$coverage,
@@ -255,8 +259,9 @@ print(system.time({
            theme_bw()+
            theme_animint(width=1500, height=facet.rows*100)+
            theme(panel.margin=grid::unit(0, "cm"))+
-           facet_grid(sample.id ~ ., labeller=function(var, val){
-             sub("McGill0", "", sub(" ", "\n", val))
+           facet_grid(sample.id ~ ., labeller=function(df){
+             df$sample.id <- sub("McGill0", "", sub(" ", "\n", df$sample.id))
+             df
            }, scales="free")+
            geom_line(aes(base/1e3, count),
                      data=PSJ$coverage,
@@ -553,8 +558,9 @@ print(system.time({
            theme_bw()+
            theme_animint(width=1500, height=facet.rows*100)+
            theme(panel.margin=grid::unit(0, "cm"))+
-           facet_grid(sample.id ~ ., labeller=function(var, val){
-             sub("McGill0", "", sub(" ", "\n", val))
+           facet_grid(sample.id ~ ., labeller=function(df){
+             df$sample.id <- sub("McGill0", "", sub(" ", "\n", df$sample.id))
+             df
            }, scales="free")+
            geom_line(aes(base/1e3, count),
                      data=PSJ$coverage,
