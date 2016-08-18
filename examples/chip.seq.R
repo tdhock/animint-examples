@@ -1,4 +1,4 @@
-works_with_R("3.2.3", "tdhock/animint@9114d24f7b906644e823fb1ca641e1d17b1ff09e")
+works_with_R("3.2.3", "tdhock/animint@9723e9d2947f42fc56486488b4baa292699a8363")
 
 load("../data/chip.seq.RData")
 
@@ -363,19 +363,11 @@ unaligned.update <- list(
                       showSelected=set.name),
                   color="grey",
                   data=chip.seq$regions)+
-    geom_text(aes(0, max, label=sprintf("%s %s", cell.type, sample1),
-                  showSelected=set.name,
-                  showSelected2=sample1),
-              data=chip.seq$signal.max$sample1, hjust=0)+
     geom_rect(aes(xmin=chromStart/1e3, xmax=chromEnd/1e3,
                   ymin=0, ymax=signal,
                   showSelected=set.name,
                   showSelected2=sample1),
               data=chip.seq$signal.segments$sample1, size=0)+
-    geom_text(aes(0, -max, label=sprintf("%s %s", cell.type, sample2),
-                  showSelected=set.name,
-                  showSelected2=sample2),
-              data=chip.seq$signal.max$sample2, hjust=0)+
     geom_rect(aes(xmin=chromStart/1e3, xmax=chromEnd/1e3,
                   ymin=-signal, ymax=0,
                   showSelected=set.name,
